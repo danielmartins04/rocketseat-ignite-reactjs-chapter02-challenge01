@@ -69,10 +69,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const updatedCart = [...cart];
       const existentProductIndex = updatedCart.findIndex(product => product.id === productId);
 
-      if (existentProductIndex >=0 ) {
+      if (existentProductIndex >= 0) {
         updatedCart.splice(existentProductIndex, 1); 
         setCart(updatedCart);
         localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCart));
+      } else {
+        throw Error();
       }
     } catch {
       toast.error('Erro na remoção do produto');
@@ -91,7 +93,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const stock = await api.get(`/stock/${productId}`);
       const stockAmount = stock.data.amount;
 
-      if (stock > stockAmount) {
+      if (amount > stockAmount) {
         toast.error('Quantidade solicitada fora de estoque');
         return;
       }

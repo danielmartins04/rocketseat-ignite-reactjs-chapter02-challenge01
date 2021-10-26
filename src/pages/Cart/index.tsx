@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   MdDelete,
   MdAddCircleOutline,
@@ -18,24 +18,23 @@ interface Product {
 }
 
 const Cart = (): JSX.Element => {
-  const { cart, removeProduct, updateProductAmount, addProduct } = useCart();
-  const [total, setTotal] = useState('');
+  const { cart, removeProduct, updateProductAmount } = useCart();
 
-  useEffect(() =>{
-    setTotal(
-      formatPrice(
-        cart.reduce((sumTotal, product) => {
-          return sumTotal += product.price * product.amount;
-        }, 0)
-    ))
-  }, [cart])
+  const total =
+    formatPrice(
+      cart.reduce((sumTotal, product) => {
+        return sumTotal += product.price;
+      }, 0)
+    )
 
   function handleProductIncrement(product: Product) {
-    addProduct(product.id);
+    const newAmount = product.amount + 1;
+    updateProductAmount({ productId: product.id, amount: newAmount });
   }
 
   function handleProductDecrement(product: Product) {
-    removeProduct(product.id);
+    const newAmount = product.amount - 1;
+    updateProductAmount({ productId: product.id, amount: newAmount });
   }
 
   function handleRemoveProduct(productId: number) {
@@ -56,7 +55,7 @@ const Cart = (): JSX.Element => {
         </thead>
         <tbody>
           {cart.map(product => (
-            <tr data-testid="product" key={product.id}>
+            <tr key={product.id} data-testid="product">
               <td>
                 <img src={product.image} alt={product.title} />
               </td>
@@ -103,7 +102,8 @@ const Cart = (): JSX.Element => {
               </td>
             </tr>
           ))}
-          
+
+
         </tbody>
       </ProductTable>
 
